@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.mapper.OrderMapper">
+    <select id="findByUserId" resultType="com.campus.entity.Order">
+        SELECT o.*, c.title as coupon_title FROM t_order o
+        JOIN coupon c ON o.coupon_id = c.id
+        WHERE o.user_id = #{userId}
+        ORDER BY o.create_time DESC
+    </select>
+    <select id="findAllWithCoupon" resultType="com.campus.entity.Order">
+        SELECT o.*, c.title as coupon_title FROM t_order o
+        JOIN coupon c ON o.coupon_id = c.id
+        WHERE o.user_id = #{userId}
+        ORDER BY o.create_time DESC
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order (user_id, coupon_id, status) VALUES (#{userId}, #{couponId}, 1)
+    </insert>
+    <update id="updateStatus">
+        UPDATE t_order SET status = #{status} WHERE id = #{id}
+    </update>
+    <select id="countByUserAndCoupon" resultType="int">
+        SELECT COUNT(*) FROM t_order WHERE user_id = #{userId} AND coupon_id = #{couponId}
+    </select>
+    <select id="findById" resultType="com.campus.entity.Order">
+        SELECT o.*, c.title as coupon_title FROM t_order o
+        JOIN coupon c ON o.coupon_id = c.id
+        WHERE o.id = #{id}
+    </select>
+</mapper>

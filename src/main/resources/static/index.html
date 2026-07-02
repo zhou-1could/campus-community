@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校园社区 - 互动与资源推荐平台</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; min-height: 100vh; }
+:root { --primary: #4f46e5; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --bg: #f0f2f5; --card: #fff; --text: #1f2937; --text2: #6b7280; --border: #e5e7eb; }
+
+.login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.login-card { background: #fff; border-radius: 16px; padding: 40px; width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+.login-card h2 { text-align: center; margin-bottom: 8px; color: #1f2937; }
+.login-card .subtitle { text-align: center; color: #9ca3af; margin-bottom: 32px; font-size: 14px; }
+.fg { margin-bottom: 16px; }
+.fg label { display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500; }
+.fg input { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
+.fg input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+.btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-primary { background: var(--primary); color: #fff; width: 100%; }
+.btn-primary:hover { background: #4338ca; }
+.btn-sm { width: auto; padding: 6px 16px; font-size: 13px; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-warning { background: var(--warning); color: #fff; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
+.switch-link { text-align: center; margin-top: 16px; color: var(--primary); cursor: pointer; font-size: 14px; }
+.switch-link:hover { text-decoration: underline; }
+.hidden { display: none !important; }
+
+.header { background: #fff; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.header .logo { font-size: 20px; font-weight: 700; color: var(--primary); }
+.header .user-info { display: flex; align-items: center; gap: 12px; }
+.header .user-info span { color: var(--text2); font-size: 14px; }
+.header .badge { padding: 2px 10px; border-radius: 12px; font-size: 12px; color: #fff; }
+.badge-admin { background: #818cf8; }
+.badge-user { background: #10b981; }
+
+.tabs { display: flex; gap: 0; background: #fff; padding: 0 24px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+.tab { padding: 14px 18px; cursor: pointer; color: var(--text2); font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+.tab:hover { color: var(--primary); }
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.main { max-width: 1200px; margin: 24px auto; padding: 0 24px; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+.card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.cate-tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+.cate-餐饮 { background: #fef3c7; color: #d97706; }
+.cate-学习 { background: #dbeafe; color: #2563eb; }
+.cate-运动 { background: #d1fae5; color: #059669; }
+.card h3 { font-size: 17px; margin: 10px 0 6px; }
+.card .card-img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: #f3f4f6; }
+.card .desc { color: var(--text2); font-size: 13px; margin-bottom: 10px; }
+.card .meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text2); }
+.card .price { font-size: 22px; font-weight: 700; color: #ef4444; }
+.card .price small { font-size: 14px; font-weight: 400; }
+.card .card-actions { margin-top: 12px; display: flex; gap: 8px; }
+
+.order-list { display: flex; flex-direction: column; gap: 12px; }
+.order-item { background: #fff; border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.order-info h4 { font-size: 15px; margin-bottom: 4px; }
+.order-info .time { font-size: 12px; color: #9ca3af; }
+.status-tag { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.status-1 { background: #fef3c7; color: #d97706; }
+.status-2 { background: #d1fae5; color: #059669; }
+
+.empty { text-align: center; padding: 60px 20px; color: #9ca3af; }
+.empty .icon { font-size: 48px; margin-bottom: 12px; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 200; }
+.modal { background: #fff; border-radius: 12px; padding: 28px; width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.modal h3 { margin-bottom: 20px; }
+.modal .btn { width: 100%; margin-top: 8px; }
+
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 24px; border-radius: 8px; color: #fff; font-size: 14px; z-index: 300; animation: slideDown 0.3s ease; }
+.toast-success { background: var(--success); }
+.toast-error { background: var(--danger); }
+@keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+.profile-card { background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; gap: 24px; align-items: flex-start; }
+.profile-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+.profile-detail p { margin-bottom: 8px; font-size: 14px; color: var(--text2); }
+.profile-detail strong { color: var(--text); }
+
+/* Sign-in */
+.sign-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.sign-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+.stat-item { text-align: center; padding: 16px; background: #f9fafb; border-radius: 10px; }
+.stat-item .num { font-size: 28px; font-weight: 700; color: var(--primary); }
+.stat-item .lbl { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.calendar { display: grid; grid-template-columns: repeat(7,1fr); gap: 8px; text-align: center; }
+.calendar .day-header { font-size: 12px; color: var(--text2); padding: 4px; }
+.calendar .day { padding: 10px 4px; border-radius: 8px; font-size: 13px; cursor: default; }
+.calendar .day.signed { background: var(--primary); color: #fff; }
+.calendar .day.today { border: 2px solid var(--primary); }
+.calendar .day.empty { color: #d1d5db; }
+
+/* Seckill */
+.seckill-card { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b; }
+.seckill-card .price { color: #dc2626; }
+.sim-result { background: #fff; border-radius: 10px; padding: 16px; margin-top: 16px; border-left: 4px solid var(--danger); }
+.sim-result h4 { color: var(--danger); margin-bottom: 8px; }
+
+.admin-section { margin-top: 24px; background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.admin-section h3 { margin-bottom: 16px; }
+.admin-section table { width: 100%; border-collapse: collapse; }
+.admin-section th, .admin-section td { padding: 8px; text-align: left; border-bottom: 1px solid #f3f4f6; }
+
+/* Log */
+.log-list { display: flex; flex-direction: column; gap: 8px; }
+.log-item { background: #fff; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.log-item .log-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.log-icon-sign { background: #e0e7ff; color: #4f46e5; }
+.log-icon-order { background: #d1fae5; color: #059669; }
+.log-icon-use { background: #fef3c7; color: #d97706; }
+.log-item .log-content { flex: 1; }
+.log-item .log-content .log-type { font-size: 12px; color: var(--text2); }
+.log-item .log-content .log-desc { font-size: 14px; color: var(--text); }
+.log-item .log-time { font-size: 12px; color: #9ca3af; white-space: nowrap; }
+.log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.async-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 12px; font-size: 11px; background: #e0e7ff; color: #4f46e5; }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="loginView" class="login-container">
+  <div class="login-card">
+    <h2 id="loginTitle">登录</h2>
+    <p class="subtitle">校园社区互动与资源推荐平台</p>
+    <div class="fg"><label>用户名</label><input type="text" id="loginUsername" placeholder="请输入用户名"></div>
+    <div class="fg"><label>密码</label><input type="password" id="loginPassword" placeholder="请输入密码"></div>
+    <div class="fg hidden" id="nicknameGroup"><label>昵称</label><input type="text" id="loginNickname" placeholder="请输入昵称"></div>
+    <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">登 录</button>
+    <p class="switch-link" id="switchLink" onclick="toggleLoginMode()">还没有账号？去注册</p>
+  </div>
+</div>
+
+<!-- Main -->
+<div id="mainView" class="hidden">
+  <div class="header">
+    <div class="logo">🎓 校园优惠券</div>
+    <div class="user-info">
+      <span id="headerNickname"></span>
+      <span class="badge" id="headerRole"></span>
+      <button class="btn btn-sm btn-danger" onclick="logout()">退出</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="coupons" onclick="switchTab('coupons')">优惠券广场</div>
+    <div class="tab" data-tab="signin" onclick="switchTab('signin')">签到打卡</div>
+    <div class="tab" data-tab="seckill" onclick="switchTab('seckill')">秒杀抢券</div>
+    <div class="tab" data-tab="logs" onclick="switchTab('logs')">操作日志</div>
+    <div class="tab" data-tab="orders" onclick="switchTab('orders')">我的订单</div>
+    <div class="tab" data-tab="recommend" onclick="switchTab('recommend')">为你推荐</div>
+    <div class="tab" data-tab="profile" onclick="switchTab('profile')">个人中心</div>
+  </div>
+
+  <div class="main">
+    <!-- Coupons -->
+    <div id="tabCoupons">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2 class="section-title" style="margin:0;">优惠券广场</h2>
+        <button class="btn btn-sm btn-primary hidden" id="addCouponBtn" onclick="showAddCoupon()">+ 发布优惠券</button>
+      </div>
+      <div class="grid" id="couponGrid"></div>
+      <div style="margin-top:24px;"><h2 class="section-title">热门优惠券 (Redis缓存)</h2><div class="grid" id="hotGrid"></div></div>
+    </div>
+
+    <!-- Sign In -->
+    <div id="tabSignin" class="hidden">
+      <div class="sign-card">
+        <h2 class="section-title">每日签到</h2>
+        <div class="sign-stats">
+          <div class="stat-item"><div class="num" id="statTotal">0</div><div class="lbl">累计签到</div></div>
+          <div class="stat-item"><div class="num" id="statContinuous">0</div><div class="lbl">连续签到</div></div>
+          <div class="stat-item"><div class="num" id="statMonth">0</div><div class="lbl">本月签到</div></div>
+          <div class="stat-item"><div class="num" id="statToday">✘</div><div class="lbl">今日状态</div></div>
+        </div>
+        <button class="btn btn-primary" id="signBtn" onclick="doSign()" style="width:auto; margin-bottom:20px;">签到</button>
+        <div class="calendar" id="calendar"></div>
+        <p style="margin-top:12px; font-size:12px; color:var(--text2);">基于Redis Bitmap实现 | 日签到仅占1bit</p>
+      </div>
+    </div>
+
+    <!-- Seckill -->
+    <div id="tabSeckill" class="hidden">
+      <h2 class="section-title">限时秒杀 (Redis分布式锁)</h2>
+      <div class="grid" id="seckillGrid"></div>
+
+      <div style="margin-top:32px;">
+        <h2 class="section-title">超卖模拟测试</h2>
+        <div class="card">
+          <p style="color:var(--text2); margin-bottom:12px;">模拟 <b>不加锁</b> 场景下的并发抢购，观察超卖现象</p>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <select id="simCouponId" style="padding:8px 12px; border:1px solid #d1d5db; border-radius:8px;"></select>
+            <input type="number" id="simConcurrent" value="50" style="width:80px; padding:8px; border:1px solid #d1d5db; border-radius:8px;" placeholder="并发数">
+            <button class="btn btn-warning btn-sm" onclick="runSimulate()">模拟并发抢购</button>
+            <span style="font-size:12px; color:var(--text2);">库存初始化为10，模拟超卖</span>
+          </div>
+          <div id="simResult" class="sim-result hidden"></div>
+        </div>
+        <p style="margin-top:12px; font-size:12px; color:var(--text2);">秒杀接口使用手写Lua脚本实现Redis分布式锁防止超卖</p>
+      </div>
+    </div>
+
+    <!-- Logs -->
+    <div id="tabLogs" class="hidden">
+      <div class="log-header">
+        <h2 class="section-title" style="margin:0;">操作日志 <span class="async-badge">⚡ 异步线程池写入</span></h2>
+        <div>
+          <button class="btn btn-sm btn-outline" onclick="loadLogs()">刷新</button>
+          <button class="btn btn-sm btn-outline" onclick="loadAllLogs()">全部日志</button>
+        </div>
+      </div>
+      <div class="log-list" id="logList"></div>
+      <div class="empty hidden" id="logEmpty"><div class="icon">📋</div><p>暂无操作记录</p></div>
+    </div>
+
+    <!-- Orders -->
+    <div id="tabOrders" class="hidden">
+      <div class="order-list" id="orderList"></div>
+      <div class="empty hidden" id="orderEmpty"><div class="icon">📭</div><p>还没有领取优惠券</p></div>
+    </div>
+
+    <!-- Recommend -->
+    <div id="tabRecommend" class="hidden">
+      <h2 class="section-title">为你推荐</h2>
+      <p style="color:var(--text2); margin-bottom:16px;">根据你的领取偏好，智能推荐同类优惠券</p>
+      <div class="grid" id="recommendGrid"></div>
+      <div class="empty hidden" id="recommendEmpty"><div class="icon">🎯</div><p>暂无推荐，去广场逛逛吧</p></div>
+    </div>
+
+    <!-- Profile -->
+    <div id="tabProfile" class="hidden">
+      <div class="profile-card">
+        <div class="profile-avatar" id="profileAvatar"></div>
+        <div class="profile-detail">
+          <h3 id="profileName"></h3>
+          <p>用户名：<strong id="profileUsername"></strong></p>
+          <p>手机：<strong id="profilePhone"></strong></p>
+          <p>角色：<strong id="profileRole"></strong></p>
+          <p>注册时间：<strong id="profileTime"></strong></p>
+        </div>
+      </div>
+      <div class="admin-section hidden" id="adminSection">
+        <h3>优惠券管理</h3>
+        <div id="adminCouponList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Modal -->
+<div id="addModal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3>发布新优惠券</h3>
+    <div class="fg"><label>标题</label><input type="text" id="addTitle"></div>
+    <div class="fg"><label>描述</label><input type="text" id="addDesc"></div>
+    <div class="fg"><label>面值(元)</label><input type="number" id="addValue" step="0.01"></div>
+    <div class="fg"><label>库存</label><input type="number" id="addStock"></div>
+    <div class="fg"><label>图片URL</label><input type="text" id="addImage" placeholder="可选，粘贴图片链接"></div>
+    <div class="fg"><label>分类</label>
+      <select id="addCategory" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;">
+        <option value="餐饮">餐饮</option><option value="学习">学习</option><option value="运动">运动</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" onclick="addCoupon()" style="width:auto;">确认发布</button>
+      <button class="btn" style="background:#e5e7eb;color:#374151;width:auto;" onclick="closeAddModal()">取消</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentUser = null;
+let isRegister = false;
+
+function toggleLoginMode() {
+  isRegister = !isRegister;
+  document.getElementById('loginTitle').textContent = isRegister ? '注册' : '登录';
+  document.getElementById('loginBtn').textContent = isRegister ? '注 册' : '登 录';
+  document.getElementById('nicknameGroup').classList.toggle('hidden', !isRegister);
+  document.getElementById('switchLink').textContent = isRegister ? '已有账号？去登录' : '还没有账号？去注册';
+}
+
+function toast(msg, type) {
+  const t = document.createElement('div');
+  t.className = 'toast toast-' + (type || 'success');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+async function api(url, options) {
+  const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...options });
+  return res.json();
+}
+
+async function handleLogin() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  if (!username || !password) { toast('请填写完整信息', 'error'); return; }
+  if (isRegister) {
+    const nickname = document.getElementById('loginNickname').value.trim();
+    const r = await api('/api/user/register', { method: 'POST', body: JSON.stringify({ username, password, nickname }) });
+    r.code === 200 ? (toast('注册成功，请登录'), toggleLoginMode()) : toast(r.msg, 'error');
+  } else {
+    const r = await api('/api/user/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+    if (r.code === 200) { currentUser = r.data; localStorage.setItem('user', JSON.stringify(currentUser)); showMain(); }
+    else toast(r.msg, 'error');
+  }
+}
+
+function logout() { localStorage.removeItem('user'); currentUser = null; document.getElementById('loginView').classList.remove('hidden'); document.getElementById('mainView').classList.add('hidden'); }
+
+function showMain() {
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('mainView').classList.remove('hidden');
+  document.getElementById('headerNickname').textContent = currentUser.nickname || currentUser.username;
+  const roleEl = document.getElementById('headerRole');
+  if (currentUser.role === 'admin') {
+    roleEl.textContent = '管理员'; roleEl.className = 'badge badge-admin';
+    document.getElementById('addCouponBtn').classList.remove('hidden');
+  } else {
+    roleEl.textContent = '用户'; roleEl.className = 'badge badge-user';
+  }
+  switchTab('coupons');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  ['coupons','signin','seckill','logs','orders','recommend','profile'].forEach(t => document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden'));
+  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
+  const actions = {
+    coupons: () => { loadCoupons(); loadHotCoupons(); },
+    signin: loadSignIn,
+    seckill: loadSeckill,
+    logs: loadLogs,
+    orders: loadOrders,
+    recommend: loadRecommend,
+    profile: loadProfile
+  };
+  if (actions[tab]) actions[tab]();
+}
+
+// === Coupons ===
+async function loadCoupons() {
+  const r = await api('/api/coupon/list');
+  document.getElementById('couponGrid').innerHTML = r.data.map(c => couponCard(c, true)).join('');
+}
+
+async function loadHotCoupons() {
+  try {
+    const r = await api('/api/redis/hot');
+    document.getElementById('hotGrid').innerHTML = r.data.map(c => couponCard(c, false)).join('');
+  } catch(e) { document.getElementById('hotGrid').innerHTML = '<p style="color:var(--text2);">Redis未连接，热门缓存不可用</p>'; }
+}
+
+function couponCard(c, showClaim) {
+  const img = c.imageUrl || '';
+  return `<div class="card">
+    ${img ? `<img class="card-img" src="${img}" alt="${c.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
+    <span class="cate-tag cate-${c.category}">${c.category}</span>
+    <h3>${c.title}</h3><p class="desc">${c.description}</p>
+    <div class="meta"><span class="price"><small>¥</small>${c.discountValue}</span><span>库存：${c.stock}</span></div>
+    ${showClaim ? `<div class="card-actions">
+      <button class="btn btn-sm btn-success" onclick="claimCoupon(${c.id})">立即领取</button>
+      ${currentUser.role === 'admin' ? `<button class="btn btn-sm btn-danger" onclick="deleteCoupon(${c.id})">删除</button>` : ''}
+    </div>` : ''}
+  </div>`;
+}
+
+async function claimCoupon(couponId) {
+  const r = await api(`/api/order/claim?userId=${currentUser.id}&couponId=${couponId}`, { method: 'POST' });
+  toast(r.msg, r.code === 200 ? 'success' : 'error');
+  if (r.code === 200) loadCoupons();
+}
+
+async function deleteCoupon(id) {
+  if (!confirm('确定删除？')) return;
+  await api('/api/coupon/' + id, { method: 'DELETE' });
+  loadCoupons();
+}
+
+// === Sign In ===
+async function loadSignIn() {
+  try {
+    const r = await api('/api/redis/sign/status?userId=' + currentUser.id);
+    const s = r.data;
+    document.getElementById('statTotal').textContent = s.totalDays;
+    document.getElementById('statContinuous').textContent = s.continuousDays;
+    document.getElementById('statMonth').textContent = s.monthDays;
+    document.getElementById('statToday').textContent = s.todaySigned ? '✔' : '✘';
+    document.getElementById('signBtn').disabled = s.todaySigned;
+
+    const mr = await api('/api/redis/sign/month?userId=' + currentUser.id);
+    const signedDates = mr.data || [];
+    renderCalendar(signedDates);
+  } catch(e) {
+    document.getElementById('calendar').innerHTML = '<p style="color:var(--text2);">Redis未连接，签到功能不可用</p>';
+  }
+}
+
+function renderCalendar(signedDates) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const today = now.getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const headers = ['日','一','二','三','四','五','六'];
+  let html = headers.map(h => `<div class="day-header">${h}</div>`).join('');
+
+  for (let i = 0; i < firstDay; i++) html += '<div class="day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = d === today;
+    const isSigned = signedDates.includes(d);
+    const cls = [isSigned ? 'signed' : '', isToday ? 'today' : ''].filter(Boolean).join(' ');
+    html += `<div class="day ${cls}">${d}</div>`;
+  }
+  document.getElementById('calendar').innerHTML = html;
+}
+
+async function doSign() {
+  try {
+    const r = await api('/api/redis/sign?userId=' + currentUser.id, { method: 'POST' });
+    if (r.code === 200) { toast('签到成功！'); loadSignIn(); }
+    else toast(r.msg, 'error');
+  } catch(e) { toast('Redis未连接', 'error'); }
+}
+
+// === Seckill ===
+async function loadSeckill() {
+  const r = await api('/api/coupon/list');
+  const html = r.data.map(c => {
+    const img = c.imageUrl || '';
+    return `<div class="card seckill-card">
+      ${img ? `<img class="card-img" src="${img}" alt="${c.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
+      <span class="cate-tag cate-${c.category}">${c.category}</span>
+      <h3>${c.title}</h3><p class="desc">${c.description}</p>
+      <div class="meta"><span class="price"><small>¥</small>${c.discountValue}</span><span>库存：<b id="stock_${c.id}">-</b></span></div>
+      <div class="card-actions">
+        <button class="btn btn-warning btn-sm" onclick="doSeckill(${c.id})">秒杀抢购</button>
+        <button class="btn btn-outline btn-sm" onclick="initSeckill(${c.id}, ${c.stock})">初始化库存</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('seckillGrid').innerHTML = html;
+  document.getElementById('simCouponId').innerHTML = r.data.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+  // Load Redis stock for each
+  r.data.forEach(async c => {
+    try { const sr = await api('/api/redis/seckill/stock?couponId=' + c.id); document.getElementById('stock_' + c.id).textContent = sr.code === 200 && sr.data >= 0 ? sr.data : c.stock; }
+    catch(e) { document.getElementById('stock_' + c.id).textContent = c.stock; }
+  });
+}
+
+async function initSeckill(couponId, stock) {
+  const r = await api('/api/redis/seckill/init?couponId=' + couponId + '&stock=' + stock, { method: 'POST' });
+  toast(r.msg); loadSeckill();
+}
+
+async function doSeckill(couponId) {
+  try {
+    const r = await api('/api/redis/seckill?userId=' + currentUser.id + '&couponId=' + couponId, { method: 'POST' });
+    toast(r.data || r.msg, r.code === 200 ? 'success' : 'error');
+    loadSeckill();
+  } catch(e) { toast('Redis未连接，秒杀不可用', 'error'); }
+}
+
+async function runSimulate() {
+  const couponId = document.getElementById('simCouponId').value;
+  const concurrent = parseInt(document.getElementById('simConcurrent').value) || 50;
+  // Init stock to 10
+  await api('/api/redis/seckill/init?couponId=' + couponId + '&stock=10', { method: 'POST' });
+  const r = await api('/api/redis/seckill/simulate?couponId=' + couponId + '&concurrent=' + concurrent, { method: 'POST' });
+  const el = document.getElementById('simResult');
+  el.classList.remove('hidden');
+  el.innerHTML = `<h4>⚠ 超卖模拟结果</h4><p>${r.data || r.msg}</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">库存初始值=10，无锁并发请求导致超卖。正确方案应使用Redis分布式锁。</p>`;
+  loadSeckill();
+}
+
+// === Logs ===
+async function loadLogs() {
+  try {
+    const r = await api('/api/log/list?userId=' + currentUser.id);
+    renderLogs(r.data || []);
+  } catch(e) { document.getElementById('logList').innerHTML = '<p style="color:var(--text2);">加载失败</p>'; }
+}
+
+async function loadAllLogs() {
+  try {
+    const r = await api('/api/log/list');
+    renderLogs(r.data || []);
+  } catch(e) { document.getElementById('logList').innerHTML = '<p style="color:var(--text2);">加载失败</p>'; }
+}
+
+function renderLogs(logs) {
+  const list = document.getElementById('logList'), empty = document.getElementById('logEmpty');
+  if (!logs || logs.length === 0) { list.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  const iconMap = { '签到打卡': { icon: '📅', cls: 'log-icon-sign' }, '领取优惠券': { icon: '🎫', cls: 'log-icon-order' }, '使用优惠券': { icon: '✔', cls: 'log-icon-use' } };
+  list.innerHTML = logs.map(l => {
+    const cfg = iconMap[l.type] || { icon: '📌', cls: 'log-icon-sign' };
+    return `<div class="log-item">
+      <div class="log-icon ${cfg.cls}">${cfg.icon}</div>
+      <div class="log-content">
+        <div class="log-type">用户${l.userId} · ${l.type}</div>
+        <div class="log-desc">${l.content}</div>
+      </div>
+      <div class="log-time">${(l.createTime||'').substring(5,16).replace('T',' ')}</div>
+    </div>`;
+  }).join('');
+}
+
+// === Orders ===
+async function loadOrders() {
+  const r = await api('/api/order/list?userId=' + currentUser.id);
+  const list = document.getElementById('orderList'), empty = document.getElementById('orderEmpty');
+  if (!r.data || !r.data.length) { list.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+  list.classList.remove('hidden'); empty.classList.add('hidden');
+  list.innerHTML = r.data.map(o => `
+    <div class="order-item">
+      <div class="order-info"><h4>${o.couponTitle}</h4><span class="time">${(o.createTime||'').substring(0,16)}</span></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="status-tag status-${o.status}">${o.status===1?'已领取':'已使用'}</span>
+        ${o.status===1 ? `<button class="btn btn-sm btn-warning" onclick="useCoupon(${o.id})">标记使用</button>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+async function useCoupon(orderId) { await api('/api/order/use/' + orderId, { method: 'PUT' }); loadOrders(); }
+
+// === Recommend ===
+async function loadRecommend() {
+  const r = await api('/api/recommend/coupons?userId=' + currentUser.id);
+  const grid = document.getElementById('recommendGrid'), empty = document.getElementById('recommendEmpty');
+  if (!r.data || !r.data.length) { grid.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+  grid.classList.remove('hidden'); empty.classList.add('hidden');
+  grid.innerHTML = r.data.map(c => couponCard(c, true)).join('');
+}
+
+// === Profile ===
+async function loadProfile() {
+  const r = await api('/api/user/profile?userId=' + currentUser.id);
+  const u = r.data;
+  document.getElementById('profileName').textContent = u.nickname || u.username;
+  document.getElementById('profileAvatar').textContent = (u.nickname || u.username).charAt(0);
+  document.getElementById('profileUsername').textContent = u.username;
+  document.getElementById('profilePhone').textContent = u.phone || '-';
+  document.getElementById('profileRole').textContent = u.role === 'admin' ? '管理员' : '普通用户';
+  document.getElementById('profileTime').textContent = (u.createTime||'').substring(0,16);
+  if (u.role === 'admin') {
+    document.getElementById('adminSection').classList.remove('hidden');
+    const cr = await api('/api/coupon/list');
+    document.getElementById('adminCouponList').innerHTML = `<table>
+      <tr><th>ID</th><th>标题</th><th>分类</th><th>库存</th><th>操作</th></tr>
+      ${cr.data.map(c => `<tr><td>${c.id}</td><td>${c.title}</td><td>${c.category}</td><td>${c.stock}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteCoupon(${c.id});loadProfile();">删除</button></td></tr>`).join('')}
+    </table>`;
+  }
+}
+
+// === Add Coupon ===
+function showAddCoupon() { document.getElementById('addModal').classList.remove('hidden'); }
+function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
+async function addCoupon() {
+  const title = document.getElementById('addTitle').value.trim();
+  const desc = document.getElementById('addDesc').value.trim();
+  const value = parseFloat(document.getElementById('addValue').value);
+  const stock = parseInt(document.getElementById('addStock').value);
+  const category = document.getElementById('addCategory').value;
+  const imageUrl = document.getElementById('addImage').value.trim();
+  if (!title || !value || !stock) { toast('请填写完整信息', 'error'); return; }
+  await api('/api/coupon', { method: 'POST', body: JSON.stringify({ title, description: desc, discountValue: value, stock, category, imageUrl }) });
+  toast('发布成功'); closeAddModal();
+  ['addTitle','addDesc','addValue','addStock','addImage'].forEach(id => document.getElementById(id).value = '');
+  loadCoupons();
+}
+
+// Init
+(function() {
+  const saved = localStorage.getItem('user');
+  if (saved) { currentUser = JSON.parse(saved); showMain(); }
+  document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+})();
+</script>
+</body>
+</html>

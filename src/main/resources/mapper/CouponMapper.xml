@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.mapper.CouponMapper">
+    <select id="findAll" resultType="com.campus.entity.Coupon">
+        SELECT * FROM coupon ORDER BY create_time DESC
+    </select>
+    <select id="findById" resultType="com.campus.entity.Coupon">
+        SELECT * FROM coupon WHERE id = #{id}
+    </select>
+    <select id="findByCategory" resultType="com.campus.entity.Coupon">
+        SELECT * FROM coupon WHERE category = #{category} ORDER BY create_time DESC
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO coupon (title, description, discount_value, stock, category, image_url, start_time, end_time)
+        VALUES (#{title}, #{description}, #{discountValue}, #{stock}, #{category}, #{imageUrl}, #{startTime}, #{endTime})
+    </insert>
+    <delete id="deleteById">
+        DELETE FROM coupon WHERE id = #{id}
+    </delete>
+    <update id="decreaseStock">
+        UPDATE coupon SET stock = stock - 1 WHERE id = #{id} AND stock > 0
+    </update>
+</mapper>
